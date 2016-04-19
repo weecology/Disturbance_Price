@@ -1,5 +1,6 @@
 library(DBI)
 library(RSQLite)
+library(dplyr)
 
 query_MACD = function(query){
   MACD_DB <- "MACD.sqlite"
@@ -19,6 +20,12 @@ make_species_table_from_MACD = function(){
 
 MACD_species = make_species_table_from_MACD()
 
+AMNIOTE_DB = read.csv("Data/Amniote_Database_Aug_2015.csv")
+AMNIOTE_DB[AMNIOTE_DB == -999] <- NA
+AMNIOTE_DB = filter(AMNIOTE_DB, adult_body_mass_g > 0)
 
+MACD_AMNIOTE_common_rows <- (AMNIOTE_DB$genus %in% MACD_species$genus 
+                                & AMNIOTE_DB$species %in% MACD_species$species)
+MACD_AMNIOTE_common_species <- AMNIOTE_DB[MACD_AMNIOTE_common_rows,]
 
 
