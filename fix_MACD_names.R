@@ -9,29 +9,31 @@ query_MACD = function(query){
   query_output <- dbGetQuery(conn, query)
 }
 
+correct_names = function(query){
+  
 changes_file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
 
 for (row in 1:nrow(changes_file)){
   if (changes_file$New_type[row] == "genus"){
-    make_query = paste0("UPDATE community_analysis_data SET genus=",changes_file$New_name1[row],
-                        " WHERE genus=", changes_file$Old_genus[row],
-                        " AND species=", changes_file$Old_species[row])
-
+    make_query = paste0("UPDATE community_analysis_data SET genus='",changes_file$New_name1[row],
+                        "' WHERE genus='", changes_file$Old_genus[row],
+                        "' AND species='", changes_file$Old_species[row], "'")
   }
    else if (changes_file$New_type[row] == "species"){
-    make_query = paste0("UPDATE community_analysis_data SET species=",changes_file$New_name1[row],
-                        " WHERE genus=", changes_file$Old_genus[row],
-                        " AND species=", changes_file$Old_species[row])
+    make_query = paste0("UPDATE community_analysis_data SET species='",changes_file$New_name1[row],
+                        "' WHERE genus='", changes_file$Old_genus[row],
+                        "' AND species='", changes_file$Old_species[row], "'")
    }
   else {
-    make_query = paste0("UPDATE community_analysis_data SET genus=",changes_file$New_name1[row],
-                        ", species=", changes_file$NewName2[row],
-                        " WHERE genus=", changes_file$Old_genus[row],
-                        " AND species=", changes_file$Old_species[row])
-    print(make_query)
-    
+    make_query = paste0("UPDATE community_analysis_data SET genus='",changes_file$New_name1[row],
+                        "', species='", changes_file$NewName2[row],
+                        "' WHERE genus='", changes_file$Old_genus[row],
+                        "' AND species='", changes_file$Old_species[row], "'")
   }
+  query_MACD(make_query)
   }
+
+correct_names()
 
 query1 = "update community_analysis_data set species = LTRIM(RTRIM(species))"
 query2 = "update community_analysis_data set genus = LTRIM(RTRIM(genus))"
