@@ -1,47 +1,68 @@
-####  FIX SPECIES NAMES TYPOS IN MACD SQLITE DATABASE   ####
+####  FIX SPECIES NAMES TYPOS AND TAXONOMIY ISSUES IN MACD SQLITE DATABASE   ####
 
 library(DBI)
 library(RSQLite)
 
-query_MACD = function(query){
-  
-  MACD_DB <- "MACD.sqlite"
+QueryMACD = function(query){
+  #  Executes queries to MACD database
+  #
+  #  Args: 
+  #    query: a string SQL query
+  #
+  #  Returns:
+  #    The output of the query to the SQL database
+  #    If there is an output specified by the query
+  #    Otherwise it returns nothing
+   MACD_DB <- "MACD.sqlite"
   conn <- dbConnect(SQLite(), MACD_DB)
-  query_output <- dbGetQuery(conn, query)
+  query.output <- dbGetQuery(conn, query)
 }
 
-remove_whitespace = function(){
+RemoveWhitespace = function(){
+  #  A junk function holding queries to remove white space in MACD
+  #  
+  #  Calls QueryMACD function to execute removal of white space
+  #  from genus and species fields in MACD
+  #
+  #  Returns:
+  #    Nothing
   query1 = "update community_analysis_data set species = LTRIM(RTRIM(species))"
   query2 = "update community_analysis_data set genus = LTRIM(RTRIM(genus))"
-  query_MACD(query1)
-  query_MACD(query2)
+  QueryMACD(query1)
+  QueryMACD(query2)
 }
 
-correct_names = function(){
-  
-changes_file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
+CorrectNames = function(){
+  #  Read info in file to make SQL queries to fix species names
+  #
+  #  Args: 
+  #    None
+  #
+  #  Returns:
+  #   Updates records in MACD SQLite database
+  #   Nothing returned
+changes.file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
 
-for (row in 1:nrow(changes_file)){
-  if (changes_file$New_type[row] == "genus"){
-    make_query = paste0("UPDATE community_analysis_data SET genus='",changes_file$New_name1[row],
-                        "' WHERE genus='", changes_file$Old_genus[row],
-                        "' AND species='", changes_file$Old_species[row], "'")
+for (row in 1:nrow(changes.file)) {
+  if (changes.file$New_type[row] == "genus"){
+    make.query = paste0("UPDATE community_analysis_data SET genus='",changes.file$New_name1[row],
+                        "' WHERE genus='", changes.file$Old_genus[row],
+                        "' AND species='", changes.file$Old_species[row], "'")
   }
-   else if (changes_file$New_type[row] == "species"){
-    make_query = paste0("UPDATE community_analysis_data SET species='",changes_file$New_name1[row],
-                        "' WHERE genus='", changes_file$Old_genus[row],
-                        "' AND species='", changes_file$Old_species[row], "'")
-   }
-  else {
-    make_query = paste0("UPDATE community_analysis_data SET genus='",changes_file$New_name1[row],
-                        "', species='", changes_file$NewName2[row],
-                        "' WHERE genus='", changes_file$Old_genus[row],
-                        "' AND species='", changes_file$Old_species[row], "'")
+   else if (changes.file$New_type[row] == "species") {
+    make.query = paste0("UPDATE community_analysis_data SET species='",changes.file$New_name1[row],
+                        "' WHERE genus='", changes.file$Old_genus[row],
+                        "' AND species='", changes.file$Old_species[row], "'")
+   } else {
+    make.query = paste0("UPDATE community_analysis_data SET genus='",changes.file$New_name1[row],
+                        "', species='", changes.file$NewName2[row],
+                        "' WHERE genus='", changes.file$Old_genus[row],
+                        "' AND species='", changes.file$Old_species[row], "'")
   }
-  query_MACD(make_query)
+  QueryMACD(make.query)
 }
 }
 
-remove_whitespace()
-correct_names()
+RemoveWhitespace()
+CorrectNames()
 
