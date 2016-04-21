@@ -30,4 +30,7 @@ MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 
 MACD_AMNIOTE_wgt = left_join(MACD_species, AMNIOTE_species, by = c("genus","species"))
+Missing_wgts = MACD_AMNIOTE_wgt[is.na(MACD_AMNIOTE_wgt$adult_body_mass_g),]
+
+family_data = read.csv("Merged_AMNIOTE_MACD.csv")
 
