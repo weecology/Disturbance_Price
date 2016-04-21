@@ -9,10 +9,15 @@ query_MACD = function(query){
   query_output <- dbGetQuery(conn, query)
 }
 
+changes_file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
+
+for (row in 1:nrow(changes_file)){
+  if (changes_file$New_type[row] == "genus"){
+    make_query = paste0("UPDATE community_analysis_data SET genus=",changes_file$New_name1[row],
+                        " WHERE genus=", changes_file$Old_genus[row],
+                        " AND species=", changes_file$Old_species[row])
+
+  }}
+
 query1 = "update community_analysis_data set species = LTRIM(RTRIM(species))"
 query2 = "update community_analysis_data set genus = LTRIM(RTRIM(genus))"
-query3= "UPDATE community_analysis_data SET species='cooperii' WHERE 
-species= 'cooperi'"
-query_MACD(query1)
-query_MACD(query2)
-query_MACD(query3)
