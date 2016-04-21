@@ -4,12 +4,20 @@ library(DBI)
 library(RSQLite)
 
 query_MACD = function(query){
+  
   MACD_DB <- "MACD.sqlite"
   conn <- dbConnect(SQLite(), MACD_DB)
   query_output <- dbGetQuery(conn, query)
 }
 
-correct_names = function(query){
+remove_whitespace = function(){
+  query1 = "update community_analysis_data set species = LTRIM(RTRIM(species))"
+  query2 = "update community_analysis_data set genus = LTRIM(RTRIM(genus))"
+  query_MACD(query1)
+  query_MACD(query2)
+}
+
+correct_names = function(){
   
 changes_file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
 
@@ -31,9 +39,9 @@ for (row in 1:nrow(changes_file)){
                         "' AND species='", changes_file$Old_species[row], "'")
   }
   query_MACD(make_query)
-  }
+}
+}
 
+remove_whitespace()
 correct_names()
 
-query1 = "update community_analysis_data set species = LTRIM(RTRIM(species))"
-query2 = "update community_analysis_data set genus = LTRIM(RTRIM(genus))"
