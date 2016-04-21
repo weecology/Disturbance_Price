@@ -27,9 +27,7 @@ make_AMNIOTE_species_table = function(){
   }
 
 MACD_species = make_species_table_from_MACD()
-MACD_species$full = paste(MACD_species$genus,"_",MACD_species$species, sep="")
 AMNIOTE_species = make_AMNIOTE_species_table()
-AMNIOTE_species$full = paste(AMNIOTE_species$genus,"_",AMNIOTE_species$species, sep="")
 
-MACD_AMNIOTE_wgt = left_join(MACD_species, AMNIOTE_species, by = 'full')
+MACD_AMNIOTE_wgt = left_join(MACD_species, AMNIOTE_species, by = c("genus","species"))
 
