@@ -33,4 +33,9 @@ MACD_AMNIOTE_wgt = left_join(MACD_species, AMNIOTE_species, by = c("genus","spec
 Missing_wgts = MACD_AMNIOTE_wgt[is.na(MACD_AMNIOTE_wgt$adult_body_mass_g),]
 
 family_data = read.csv("Merged_AMNIOTE_MACD.csv")
-
+Missing.w.class = left_join(Missing_wgts, family_data, by = "species_codes")
+Missing.w.class = Missing.w.class %>% select(Class, family.x, genus.x,
+                                             species.x, species_codes,
+                                             adult_body_mass_g.x)
+names(Missing.w.class) = c("Class", "Family", "Genus", "Species", 
+                           "Species_codes", "Adult_mass_g")
