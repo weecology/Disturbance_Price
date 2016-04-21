@@ -22,8 +22,15 @@ for (row in 1:nrow(changes_file)){
     make_query = paste0("UPDATE community_analysis_data SET species=",changes_file$New_name1[row],
                         " WHERE genus=", changes_file$Old_genus[row],
                         " AND species=", changes_file$Old_species[row])
-   print(make_query)
    }
+  else {
+    make_query = paste0("UPDATE community_analysis_data SET genus=",changes_file$New_name1[row],
+                        ", species=", changes_file$NewName2[row],
+                        " WHERE genus=", changes_file$Old_genus[row],
+                        " AND species=", changes_file$Old_species[row])
+    print(make_query)
+    
+  }
   }
 
 query1 = "update community_analysis_data set species = LTRIM(RTRIM(species))"
