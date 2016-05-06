@@ -16,6 +16,7 @@ make_species_table_from_MACD = function(){
   number_species = nrow(unique_species)
   species_codes = c(1:number_species)
   unique_species = cbind(unique_species, species_codes)
+  unique_species = unique_species %>% distinct(genus, species)
   return(unique_species)
 }
 
@@ -29,13 +30,7 @@ make_AMNIOTE_species_table = function(){
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 
-MACD_AMNIOTE_wgt = left_join(MACD_species, AMNIOTE_species, by = c("genus","species"))
-Missing_wgts = MACD_AMNIOTE_wgt[is.na(MACD_AMNIOTE_wgt$adult_body_mass_g),]
 
-family_data = read.csv("Merged_AMNIOTE_MACD.csv")
-Missing.w.class = left_join(Missing_wgts, family_data, by = "species_codes")
-Missing.w.class = Missing.w.class %>% select(Class, family.x, genus.x,
-                                             species.x, species_codes,
-                                             adult_body_mass_g.x)
-names(Missing.w.class) = c("Class", "Family", "Genus", "Species", 
-                           "Species_codes", "Adult_mass_g")
+
+unique_species_wgt = left_join(MACD_species, AMNIOTE_species, by = c("genus","species"))
+
