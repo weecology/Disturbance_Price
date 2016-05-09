@@ -1,3 +1,6 @@
+# Create a species table with taxonomic information and body size for all species
+# in the MACD database
+
 library(DBI)
 library(RSQLite)
 library(dplyr)
@@ -103,7 +106,16 @@ make_merged_family_column = function(data){
 }
 
 add_class_info = function(data){
-  
+  # Add taxonomic class to species table
+  #
+  #  Args:
+  #    AMNIOTE: dataframe generated from make_AMNIOTE_species_table function
+  #    MACD: dataframe generated from make_species_table_from_MACD function
+  #    
+  #  Returns:
+  #    MACD_AMNIOTE_rawmerge: dataframe containing taxonomic info and weights 
+  #       from AMNIOTE and family from either MACD or AMNIOTE if present for
+  #       each unique species in MACD
   changes.file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
   
   for (row in 1:nrow(changes.file)) {
@@ -135,7 +147,6 @@ make_species_table = function(AMNIOTE, MACD){
 }
 
 
-  
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 species_table = make_species_table(AMNIOTE_species, MACD_species)
