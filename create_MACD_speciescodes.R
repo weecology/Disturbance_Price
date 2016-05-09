@@ -146,10 +146,19 @@ make_species_table = function(AMNIOTE, MACD){
   return(MACD_AMNIOTE_rawmerge)
 }
 
+median_weights = function(){
+  
+  missing_wgts = read.csv("Data/Missing_species_weights.csv", stringsAsFactors = FALSE)
+  grouped_species = group_by(missing_wgts, Genus, Species)
+  species_medians = summarise(grouped_species, median=median(Avg_Est))
+  return(species_medians)
+}
+
 
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 species_table = make_species_table(AMNIOTE_species, MACD_species)
+new_weights = median_weights()
 
 
 
