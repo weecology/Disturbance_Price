@@ -156,12 +156,15 @@ median_weights = function(){
   return(output)
 }
 
-
+merge_old_new_masses = function(old_masses, new_masses){
+  data = left_join(old_masses, new_masses, by = c("genus","species"))
+  data = data %>% 
+          mutate(mass = ifelse(!is.na(adult_body_mass_g), adult_body_mass_g, median)) %>% 
+          select(c(-adult_body_mass_g, -median)) 
+  return(data)
+}
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 species_table = make_species_table(AMNIOTE_species, MACD_species)
 new_weights = median_weights()
-
-
-unique_species_wgt = left_join(species_table, new_weights, by = c("genus","species"))
-
+species_table = merge_old_new_masses(species_table, new_weights)
