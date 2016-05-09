@@ -102,6 +102,19 @@ make_merged_family_column = function(data){
   return(merged_family)
 }
 
+add_class_info = function(data){
+  
+  changes.file = read.csv("Data/MACD_namechanges.csv", stringsAsFactors = FALSE)
+  
+  for (row in 1:nrow(changes.file)) {
+    if (changes.file$New_type[row] == "class"){
+      data$class = replace(data$class, data$Family == changes.file$Old_genus[row], 
+                                    changes.file$New_name1[row])
+    }
+  }
+  return(data)
+}
+
 make_species_table = function(AMNIOTE, MACD){
   # Master function making baseline species table with taxonomic info and weight
   #
@@ -117,12 +130,18 @@ make_species_table = function(AMNIOTE, MACD){
   MACD_AMNIOTE_rawmerge$Family = make_merged_family_column(MACD_AMNIOTE_rawmerge)
   MACD_AMNIOTE_rawmerge = select(MACD_AMNIOTE_rawmerge, c(-family.x, -family.y))
   MACD_AMNIOTE_rawmerge = MACD_AMNIOTE_rawmerge[c(1,6,2:5)]
+  MACD_AMNIOTE_rawmerge = add_class_info(MACD_AMNIOTE_rawmerge)
   return(MACD_AMNIOTE_rawmerge)
 }
 
+
+  
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 species_table = make_species_table(AMNIOTE_species, MACD_species)
+
+
+
 
 
 
