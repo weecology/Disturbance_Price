@@ -48,16 +48,15 @@ for (row in 1:nrow(changes.file)) {
     make.query = paste0("UPDATE community_analysis_data SET genus='",changes.file$New_name1[row],
                         "' WHERE genus='", changes.file$Old_genus[row],
                         "' AND species='", changes.file$Old_species[row], "'")
-  }
-   else if (changes.file$New_type[row] == "species") {
-    make.query = paste0("UPDATE community_analysis_data SET species='",changes.file$New_name1[row],
+  } else if (changes.file$New_type[row] == "species") {
+      make.query = paste0("UPDATE community_analysis_data SET species='",changes.file$New_name1[row],
                         "' WHERE genus='", changes.file$Old_genus[row],
                         "' AND species='", changes.file$Old_species[row], "'")
    } else if (changes.file$New_type[row] == "family"){
-     make.query = paste0("UPDATE community_analysis_data SET family='",changes.file$New_name1[row],
+      make.query = paste0("UPDATE community_analysis_data SET family='",changes.file$New_name1[row],
                          "' WHERE genus='", changes.file$Old_genus[row],"'")
    } else {
-    make.query = paste0("UPDATE community_analysis_data SET genus='",changes.file$New_name1[row],
+      make.query = paste0("UPDATE community_analysis_data SET genus='",changes.file$New_name1[row],
                         "', species='", changes.file$NewName2[row],
                         "' WHERE genus='", changes.file$Old_genus[row],
                         "' AND species='", changes.file$Old_species[row], "'")
