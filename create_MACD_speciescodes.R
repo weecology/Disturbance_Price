@@ -21,6 +21,8 @@ query_MACD = function(query){
   MACD_DB <- "MACD.sqlite"
   conn <- dbConnect(SQLite(), MACD_DB)
   query_output <- dbGetQuery(conn, query)
+  dbDisconnect(conn)
+  return(query_output)
 }
 
 make_species_table_from_MACD = function(){
@@ -163,8 +165,23 @@ merge_old_new_masses = function(old_masses, new_masses){
           select(c(-adult_body_mass_g, -median)) 
   return(data)
 }
+
+insert_species_table_into_MACD = function(new_table){
+  conn <- dbConnect(SQLite(), "MACD.sqlite")
+  get_tables = dbListTables(conn)
+  species_table_exist = 'species_table' %in% get_tables
+  if (species_table_exist == 'FALSE'){
+    dbWriteTable(conn, 'species_table', new_table)
+    dbDisconnect(conn)
+  } else {
+    dbDisconnect(conn)
+  }
+}
+
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
 species_table = make_species_table(AMNIOTE_species, MACD_species)
 new_weights = median_weights()
 species_table = merge_old_new_masses(species_table, new_weights)
+insert_species_table_into_MACD(species_table)
+
