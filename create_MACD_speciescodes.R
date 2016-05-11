@@ -168,15 +168,10 @@ merge_old_new_masses = function(old_masses, new_masses){
 
 insert_species_table_into_MACD = function(new_table){
   conn <- dbConnect(SQLite(), "MACD.sqlite")
-  get_tables = dbListTables(conn)
-  species_table_exist = 'species_table' %in% get_tables
-  if (species_table_exist == 'FALSE'){
-    dbWriteTable(conn, 'species_table', new_table)
-    dbDisconnect(conn)
-  } else {
-    dbDisconnect(conn)
-  }
+  dbWriteTable(conn, 'species_table', new_table, overwrite = TRUE)
+  dbDisconnect(conn)
 }
+
 
 MACD_species = make_species_table_from_MACD()
 AMNIOTE_species = make_AMNIOTE_species_table()
