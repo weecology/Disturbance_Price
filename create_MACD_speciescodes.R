@@ -149,9 +149,19 @@ combine_AMNIOTE_MACD_tables = function(AMNIOTE, MACD){
 }
 
 median_weights = function(){
-  
+  # Opens Missing_species_weights.csv and calculates each species median weight
+  #
+  #  Args:
+  #    None
+  #
+  #  Important Internal Variables:
+  #      filename and path for Missing_species_weights.csv are embedded in function
+  #
+  #  Returns:
+  #    MACD_AMNIOTE_rawmerge: dataframe containing taxonomic info and weights 
+  #       from AMNIOTE and family from either MACD or AMNIOTE if present for
+  #       each unique species in MACD
   missing_wgts = read.csv("Data/Missing_species_weights.csv", stringsAsFactors = FALSE)
-  
   output = missing_wgts %>% group_by(genus, species) %>%
     summarise(median=median(adult_body_mass_g)) %>%
     as.data.frame()
@@ -159,6 +169,15 @@ median_weights = function(){
 }
 
 add_missing_masses_to_species_table = function(old_masses){
+  # Adds weights for species that did not have weights in AMNIOTE
+  #
+  #  Args:
+  #    old_masses: dataframe containing the merge from AMNIOTE and MACD
+  #
+  #  Returns:
+  #    data: dataframe of species names and weights with weights from AMNIOTE and
+  #          additional weights for species not found in AMNIOTE added from the 
+  #          file Missing_species_weights.csv
   new_masses = median_weights()
   data = left_join(old_masses, new_masses, by = c("genus","species"))
   data = data %>% 
