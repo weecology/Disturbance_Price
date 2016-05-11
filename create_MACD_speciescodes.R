@@ -25,7 +25,7 @@ query_MACD = function(query){
   return(query_output)
 }
 
-make_species_table_from_MACD = function(){
+make_MACD_species_table = function(){
   #  Extracts list of unique species from MACD
   #  
   #  Args:
@@ -129,7 +129,7 @@ add_class_info = function(data){
   return(data)
 }
 
-make_species_table = function(AMNIOTE, MACD){
+combine_AMNIOTE_MACD_tables = function(AMNIOTE, MACD){
   # Master function making baseline species table with taxonomic info and weight
   #
   #  Args:
@@ -158,7 +158,7 @@ median_weights = function(){
   return(output)
 }
 
-merge_old_new_masses = function(old_masses, new_masses){
+add_missing_masses_to_species_table = function(old_masses, new_masses){
   data = left_join(old_masses, new_masses, by = c("genus","species"))
   data = data %>% 
           mutate(mass = ifelse(!is.na(adult_body_mass_g), adult_body_mass_g, median)) %>% 
@@ -173,10 +173,10 @@ insert_species_table_into_MACD = function(new_table){
 }
 
 
-MACD_species = make_species_table_from_MACD()
+MACD_species = make_MACD_species_table()
 AMNIOTE_species = make_AMNIOTE_species_table()
-species_table = make_species_table(AMNIOTE_species, MACD_species)
+species_table = combine_AMNIOTE_MACD_tables(AMNIOTE_species, MACD_species)
 new_weights = median_weights()
-species_table = merge_old_new_masses(species_table, new_weights)
+species_table = add_missing_masses_to_species_table(species_table, new_weights)
 insert_species_table_into_MACD(species_table)
 
